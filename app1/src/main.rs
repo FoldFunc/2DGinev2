@@ -16,7 +16,8 @@ fn main() -> Result<(), Box<dyn Error>> {
     canvas.run(|canvas| {
         canvas.e_set_draw_color(0, 0, 0)?;
         canvas.e_clear()?;
-        // Draw here...
+        let _pixel = canvas.e_draw_pixel(100, 100, 100, 100, 100)?;
+        canvas.e_clear()?;
         Ok(())
     })?;
 
