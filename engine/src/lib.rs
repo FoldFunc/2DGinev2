@@ -13,18 +13,24 @@ pub struct Canvas {
     _event_pump: sdl2::EventPump, // For polling events
     events: HashMap<Keycode, Box<dyn FnMut()>>,
 }
+#[derive(Clone)]
 pub struct Point {
-    x: i32,
-    y: i32,
-    color: Color,
+    pub x: i32,
+    pub y: i32,
+    pub color: Color,
 }
 impl Point {
     pub fn new(x: i32, y: i32, color: Vec<u8>) -> Self {
         Point { x: x, y: y, color: Color::RGB(color[0], color[1], color[2])}
     }
-    pub fn draw(&mut self, canvas: &mut Canvas) {
+    pub fn draw(&self, canvas: &mut Canvas) {
         canvas.canvas.set_draw_color(self.color);
         canvas.canvas.draw_point(PointS::new(self.x, self.y));
+    }
+    pub fn change_pos(&mut self, x: i32, y: i32, color: Vec<u8>) {
+        self.x = x;
+        self.y = y;
+        self.color = Color::RGB(color[0], color[1], color[2]);
     }
 }
 
@@ -49,15 +55,10 @@ impl Canvas {
     }
     pub fn e_draw_pixel(
         &mut self,
-        r: u8,
-        g: u8,
-        b: u8,
-        x: i32,
-        y: i32,
-    ) -> Result<Point, Box<dyn std::error::Error>> {
-        let mut point = Point::new(x, y, vec![r, g, b]);
+        point: &Point,
+    ) -> Result<(), Box<dyn std::error::Error>> {
         point.draw(self);
-        Ok(point)
+        Ok(())
     }
     pub fn e_set_draw_color(&mut self, r: u8, g: u8, b: u8) -> Result<(), Box<dyn std::error::Error>> {
         self.canvas.set_draw_color(Color::RGB(r, g, b));
@@ -80,6 +81,8 @@ impl Canvas {
             "RETURN" => Keycode::Return,
             "A" => Keycode::A,
             "D" => Keycode::D,
+            "W" => Keycode::W,
+            "S" => Keycode::S,
             _ => return Err(format!("Invalid key code: {:?}", key).into()),
         };
 
